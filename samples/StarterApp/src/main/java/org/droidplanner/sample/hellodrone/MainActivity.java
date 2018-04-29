@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +50,7 @@ import com.o3dr.services.android.lib.model.AbstractCommandListener;
 import com.o3dr.services.android.lib.model.SimpleCommandListener;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.List;
 
 import static com.o3dr.android.client.apis.ExperimentalApi.getApi;
@@ -80,10 +82,15 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
     Handler mainHandler;
 
+    private Double targetAlt = 0d;
+    private EditText targetAltEditText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        targetAltEditText = (EditText) findViewById(R.id.altitudeTargetEditText);
 
         final Context context = getApplicationContext();
         this.controlTower = new ControlTower(context);
@@ -355,11 +362,20 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             });
         } else if (vehicleState.isArmed()) {
             // Take off
-            ControlApi.getApi(this.drone).takeoff(10, new AbstractCommandListener() {
+            try {
+                targetAlt = Double.parseDouble(targetAltEditText.getText().toString());
+            } catch (NumberFormatException e) {
+                alertUser("Error retrieving target altitude");
+            }
+
+            if (!(targetAlt > 0))
+                alertUser("Please enter an altitude greater than 0");
+
+            ControlApi.getApi(this.drone).takeoff(targetAlt, new AbstractCommandListener() {
 
                 @Override
                 public void onSuccess() {
-                    alertUser("Taking off...");
+                    alertUser("Taking off to altitude " + targetAlt);
                 }
 
                 @Override
