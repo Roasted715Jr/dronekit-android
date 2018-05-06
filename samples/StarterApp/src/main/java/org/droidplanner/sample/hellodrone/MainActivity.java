@@ -50,7 +50,6 @@ import com.o3dr.services.android.lib.model.AbstractCommandListener;
 import com.o3dr.services.android.lib.model.SimpleCommandListener;
 
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.util.List;
 
 import static com.o3dr.android.client.apis.ExperimentalApi.getApi;
@@ -85,12 +84,13 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     private Double targetAlt = 0d;
     private EditText targetAltEditText;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        targetAltEditText = (EditText) findViewById(R.id.altitudeTargetEditText);
+        targetAltEditText = (EditText) findViewById(R.id.takeoffAltEditText);
 
         final Context context = getApplicationContext();
         this.controlTower = new ControlTower(context);
